@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+!.env.vps.example
+node_modules/
+.next/
+dist/
+__pycache__/
+venv/
+.venv/
+.idea/
+.vscode/
+uploads/
+!uploads/.gitkeep
+test_samples/fake/
+test_samples/real/

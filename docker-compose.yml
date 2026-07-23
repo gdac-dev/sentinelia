@@ -1,0 +1,50 @@
+services:
+
+  # ── Backend Express (sentinelia-api) ─────────────────────────
+  sentinelia-api:
+    build:
+      context: ./sentinelia-api
+      dockerfile: Dockerfile
+    container_name: sentinelia-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+      # PostgreSQL — adaptez les credentials à votre VPS
+      DATABASE_URL: "${DATABASE_URL:-postgresql://postgres:postgres@db:5432/sentinelia}"
+      # Service IA Python (nom Docker interne)
+      AI_SERVICE_URL: "http://sentinelia-ai:8000"
+      # URL du frontend Vercel — À RENSEIGNER une fois déployé
+      FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
+    depends_on:
+      - sentinelia-ai
+    networks:
+      - sentinelia-net
+
+  # ── Service IA Python (sentinelia-ai) ────────────────────────
+  sentinelia-ai:
+    build:
+      context: ./sentinelia-ai
+      dockerfile: Dockerfile
+    container_name: sentinelia-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Clés Sightengine — OBLIGATOIRES (https://sightengine.com)
+      SIGHTENGINE_API_USER: "${SIGHTENGINE_API_USER}"
+      SIGHTENGINE_API_SECRET: "${SIGHTENGINE_API_SECRET}"
+    # Les modèles HuggingFace sont téléchargés au premier démarrage
+    # et mis en cache dans ce volume pour ne pas re-télécharger à chaque redémarrage
+    volumes:
+      - huggingface-cache:/root/.cache/huggingface
+    networks:
+      - sentinelia-net
+
+volumes:
+  huggingface-cache:
+
+networks:
+  sentinelia-net:
+    driver: bridge

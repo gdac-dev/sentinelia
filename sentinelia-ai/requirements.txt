@@ -1,0 +1,18 @@
+# ── Core ───────────────────────────────────────────────────
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+python-multipart==0.0.20
+
+# ── IA / Machine Learning ─────────────────────────────────
+transformers==4.52.4
+torch==2.7.1
+torchaudio==2.7.1
+
+# ── Traitement d'image et vidéo ────────────────────────────
+Pillow==11.2.1
+opencv-python-headless==4.11.0.86
+numpy==2.3.0
+
+# ── Détection de visage ────────────────────────────────────
+mediapipe>=0.10.0
+

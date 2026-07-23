@@ -1,0 +1,28 @@
+# Environnement virtuel
+venv/
+.venv/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Variables d'environnement — NE JAMAIS COMMITER
+.env
+.env.local
+.env.*.local
+
+# Modèles téléchargés par HuggingFace (cache lourd)
+# Les modèles sont mis en cache dans ~/.cache/huggingface/
+
+# Fichiers temporaires
+*.tmp
+*.temp
+
+# IDE
+.vscode/
+.idea/
+
+# Échantillons de test (potentiellement sensibles)
+test_samples/fake/
+test_samples/real/
