@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     ]
   },
   manifest: "/manifest.json"
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A0E17",
 };
 
 export default function RootLayout({
