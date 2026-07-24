@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { playPositiveSound, playNegativeSound } from "../../lib/sound";
 
 export interface AnalysisResult {
   score: number;          // 0–100 (0 = authentic, 100 = fully synthetic)
@@ -15,6 +16,20 @@ interface ResultCardProps {
 
 export default function ResultCard({ result, onReset }: ResultCardProps) {
   const [animatedScore, setAnimatedScore] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const soundPlayed = useRef(false);
+
+  // Play sound on mount if not muted
+  useEffect(() => {
+    if (!soundPlayed.current && !isMuted) {
+      soundPlayed.current = true;
+      if (result.score < 40) {
+        playPositiveSound();
+      } else if (result.score >= 70) {
+        playNegativeSound();
+      }
+    }
+  }, [result.score, isMuted]);
 
   const isSuspicious = result.score >= 50;
 
@@ -74,7 +89,29 @@ export default function ResultCard({ result, onReset }: ResultCardProps) {
   }, [targetDisplayScore]);
 
   return (
-    <div className="flex flex-col items-center gap-8 py-4">
+    <div className="relative flex w-full flex-col items-center gap-8 py-4">
+      {/* Sound toggle button */}
+      <button
+        onClick={() => setIsMuted(!isMuted)}
+        className="absolute right-0 top-0 p-2 text-text-muted hover:text-text-primary transition-colors focus-ring rounded-lg"
+        aria-label={isMuted ? "Activer le son" : "Couper le son"}
+        title={isMuted ? "Activer le son" : "Couper le son"}
+      >
+        {isMuted ? (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+        )}
+      </button>
+
       {/* Circular score */}
       <div className="relative flex items-center justify-center">
         <svg width="180" height="180" viewBox="0 0 180 180" aria-hidden="true">
