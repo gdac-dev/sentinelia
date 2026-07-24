@@ -18,6 +18,21 @@ export default function ResultCard({ result, onReset }: ResultCardProps) {
 
   const isSuspicious = result.score >= 50;
 
+  // Determine transformed score and label
+  let targetDisplayScore = result.score;
+  let displayLabel = "incertain";
+
+  if (result.score < 40) {
+    targetDisplayScore = 100 - Math.round(result.score);
+    displayLabel = "authentique";
+  } else if (result.score >= 70) {
+    targetDisplayScore = Math.round(result.score);
+    displayLabel = "synthétique";
+  } else {
+    targetDisplayScore = Math.round(result.score);
+    displayLabel = "incertain";
+  }
+
   // Color selection based on score
   const scoreColor = result.score < 40
     ? "var(--color-accent)"       // cyan — authentic
@@ -47,7 +62,7 @@ export default function ResultCard({ result, onReset }: ResultCardProps) {
       const progress = Math.min(elapsed / duration, 1);
       // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      setAnimatedScore(Math.round(eased * result.score));
+      setAnimatedScore(Math.round(eased * targetDisplayScore));
 
       if (progress < 1) {
         frame = requestAnimationFrame(animate);
@@ -56,7 +71,7 @@ export default function ResultCard({ result, onReset }: ResultCardProps) {
 
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
-  }, [result.score]);
+  }, [targetDisplayScore]);
 
   return (
     <div className="flex flex-col items-center gap-8 py-4">
@@ -123,7 +138,7 @@ export default function ResultCard({ result, onReset }: ResultCardProps) {
             {animatedScore}%
           </span>
           <span className="text-xs text-text-muted">
-            {isSuspicious ? "synthétique" : "authentique"}
+            {displayLabel}
           </span>
         </div>
       </div>
